@@ -18,3 +18,8 @@ table(base1.1$sexo)
 attach(base1.1)
 table(edad)
 summary(base1.1$teduca)
+#importando base de datos
+install.packages("foreign")
+require(foreign)
+sociodem<-read.dbf("C://Users//SALA-C24.RTIC-C24-HP.000//Desktop//SDEMT215.dbf")
+table(sociodem$SEX)
