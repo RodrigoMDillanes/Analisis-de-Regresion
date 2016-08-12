@@ -1,0 +1,34 @@
+rm(list = ls())
+setwd("C://Users//SALA-C24.RTIC-C24-HP.000//Desktop")
+require(foreign)
+SDEMT215<-data.frame(read.dbf("SDEMT215.dbf"))
+install.packages("questionr")
+require(questionr)
+wtd.table(SDEMT215$POS_OCU)
+wtd.table(SDEMT215$POS_OCU,na.show = TRUE)
+#FRECUENCIAS PARA DATOS PONDERADOS 
+wtd.table(SDEMT215$POS_OCU,weights = SDEMT215$FAC,na.show = TRUE)
+#TABULADOS:DOS VARIABLES
+wtd.table(SDEMT215$SEX,SDEMT215$POS_OCU)
+wtd.table(SDEMT215$SEX,SDEMT215$POS_OCU,weights = SDEMT215$FAC)
+##ejercicio
+#1) obtener la frecuencia de la variable clase1(muestral)
+#2) obtener el tabulado de entidad y sexo(muestral y ponderado)
+#1)
+wtd.table(SDEMT215$CLASE1)
+#2)
+wtd.table(SDEMT215$ENT,SDEMT215$SEX,weights = SDEMT215$FAC)
+wtd.table(SDEMT215$ENT,SDEMT215$SEX)
+
+####ETIQUETAR VARIEBLES 
+SDEMT215$SEXO<-factor(SDEMT215$SEX,levels = c(1,2),labels = c("hombre","mujer"))
+wtd.table(SDEMT215$SEXO)
+View(SDEMT215)
+
+##ETIQUETANDO EN LA MISMA VARIABLE
+
+SDEMT215$POS_OCU<-factor(SDEMT215$POS_OCU,levels = c(1,2,3,4,5),labels = c("Subordinados y remunerados","Empleadores","Cuenta propia","Sin pago","NE"))
+wtd.table(SDEMT215$POS_OCU)
+
+#TABULADOS DE VARIABLES ETIQUETADAS
+wtd.table(SDEMT215$POS_OCU,SDEMT215$SEXO,weights = SDEMT215$FAC)
