@@ -1,0 +1,56 @@
+##RECODIFICAR
+
+##4.1 recodificacion de variables numericas (rangos)
+
+#Método 1
+#AGRUPAR POR EDADES DE 10
+
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA)>=0 & as.numeric(SDEMT215$EDA)<=10]<-1
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA)>=11 & as.numeric(SDEMT215$EDA)<=20]<-2
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA)>=21 & as.numeric(SDEMT215$EDA)<=30]<-3
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA)>=31 & as.numeric(SDEMT215$EDA)<=40]<-4
+SDEMT215$EDAD11[as.numeric(SDEMT215$EDA)>=41]<-5
+ls(SDEMT215) #ver todas las variables de mi base
+table(SDEMT215$EDAD11)
+class(SDEMT215$ENT)
+SDEMT215$ENT<-(as.character(as.numeric(SDEMT215$ENT)))
+class(SDEMT215$ENT)
+
+#Método 2 ifelse
+
+SDEMT215$EDAD11<-ifelse(as.numeric(SDEMT215$EDA)>=0 & as.numeric(SDEMT215$EDA)<=10,1,
+                        ifelse(as.numeric(SDEMT215$EDA)>=11 & as.numeric(SDEMT215$EDA)<=20,2,
+                               ifelse(as.numeric(SDEMT215$EDA)>=21 & as.numeric(SDEMT215$EDA)<=30,3,
+                                      ifelse(as.numeric(SDEMT215$EDA)>=31 & as.numeric(SDEMT215$EDA)<=40,4,5))))
+table(SDEMT215$EDAD11)
+
+#RECODIFICAR VARIABLES DE TIPO CADENA
+class(SDEMT215$R_DEF)
+SDEMT215$VALIDO[as.character(SDEMT215$R_DEF)!="00"]<-"Entrevista Incompleta"
+SDEMT215$VALIDO[as.character(SDEMT215$R_DEF)=="00"]<-"Entrevista Completa"
+
+wtd.table(SDEMT215$VALIDO)
+
+
+########################################
+
+#SUBCONJUNTO DE DATOS
+
+#Seleccionando variables de interés
+
+#Método 1
+var<-c("R_DEF","LOC","MUN","C_RES")
+newdata1<-SDEMT215[,var]
+
+
+#Seleccionar observaciones
+#usando la funcion  subset()
+?subset
+
+mujer<-subset(SDEMT215,SDEMT215$SEX==2)
+table(mujer$SEX)
+class(mujer$CD_A)
+mujer$CD_A<-(as.character(as.numeric(mujer$CD_A)))
+class(mujer$CD_A)
+mujer1<-subset(mujer,mujer$CD_A=="02" | mujer$CD_A=="16")
+table(mujer1$CD_A)
