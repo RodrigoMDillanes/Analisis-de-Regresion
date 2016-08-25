@@ -1,0 +1,8 @@
+#####Entidades 14-Jalisco y 05-Coahuila
+
+SDEMT215$ENT<-as.numeric(SDEMT215$ENT)
+require(questionr)
+C<-wtd.table(SDEMT215$POS_OCU,SDEMT215$SEX,SDEMT215$ENT==5)
+J<-wtd.table(SDEMT215$POS_OCU,SDEMT215$SEX,SDEMT215$ENT==14)
+data.frame(C,J)
+###exportar excel
