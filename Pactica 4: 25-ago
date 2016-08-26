@@ -6,3 +6,10 @@ C<-wtd.table(SDEMT215$POS_OCU,SDEMT215$SEX,SDEMT215$ENT==5)
 J<-wtd.table(SDEMT215$POS_OCU,SDEMT215$SEX,SDEMT215$ENT==14)
 data.frame(C,J)
 ###exportar excel
+install.packages("XLConnect")
+require(XLConnect)
+#para instalar el XLConnect tuve que actualizar java en mi Mac
+wb<-loadWorkbook("practica.xlsx",create=TRUE)
+createSheet(wb,name = "Tabla de Jalisco y Coahuila")
+writeWorksheet(wb,tabla,"Tabla de Jalisco y Coahuila",startRow = 2,startCol = 2,header = TRUE)
+saveWorkbook(wb)
