@@ -32,4 +32,4 @@ plot(neconomico,estaturas, pch=8, xlab = "ingreso economico",ylab = "estatura", 
 abline(mod1)#grafica la recta mod1 en la grafica de deispersion de las variables en estudio
 
 #con esto podriamos decir qie tenemos una ecuacion
-estaturas=.9323+.0023 neconomico
+estaturas=.9323+.0023* neconomico
