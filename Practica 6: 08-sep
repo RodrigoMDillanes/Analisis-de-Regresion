@@ -1,0 +1,64 @@
+estaturas<-c(1.2,1.23,1.19,1.32,1.28,1.22,1.17,1.29,1.33,1.15)
+neconomico<-c(110,130,108,167,156,115,104,138,170,107)
+
+#queremos comprobar la hipótesis que entre mayor nivel económico 
+#mayor es la estatura del niño
+#Paso 1: ver gráfica de dispersion para saber si podemos ajustar una recta
+
+plot(neconomico,estaturas, pch=8, xlab = "ingreso economico",ylab = "estatura", main = "grafica de dispersión",col="brown")
+#el argumento pch nos da la forma del punto de la grafica de dispersion
+#Paso 2: calcular correralcion
+#para calcular el coef. de correlacion usamos la funcion cor()
+
+cor(neconomico,estaturas,method = "pearson")
+
+#Paso 3: hacer prueba a la correlacion para afirmarla
+#la prueba de hipotesis H0=r=0
+#es decir no hay relacion, Ha=1 0 si hay relacion
+cor.test(neconomico,estaturas,method = "pearson")
+#si p-value<.05 la hipotesis es nula, rechazamos H0, aceptamos la hipotesis alternativa
+#por lo tanto  si existe relacion 
+
+#Paso 4: aplicar modelo  usando la funcion lineal model lm()
+mod1<-lm(estaturas~neconomico)
+#lm(var dependiente, var independiente)
+summary(mod1)
+#Residuals: queremos que sean muy cercanos a cero, nos generan las diferencias entre los valores ajustados y los reales
+#si nos da e asteriscos es porque es fuertemente significativo significativo y podemos interpretar los coeficioentes
+#con un * tenemos un 95% de confianza
+#graficando nuevamente
+plot(neconomico,estaturas, pch=8, xlab = "ingreso economico",ylab = "estatura", main = "grafica de dispersión",col="brown")
+#para añadir la recta ajustada usamos abline
+abline(mod1)#grafica la recta mod1 en la grafica de deispersion de las variables en estudio
+
+#con esto podriamos decir qie tenemos una ecuacion
+estaturas=.9323+.0023* neconomico
+summary(mod1$coefficients)
+
+#el error estandar es de 0.0198, lo vemos en el summary(mod1)
+summary(mod1)
+#para calcular el intervalo de confianza se usa
+confint(mod1,level = .95)
+# con una prob de 95 el coef b0 cae entre (0.854,1.0105)
+# con una prob de 95 el coef b1 cae entre (0.001753,0.002930)
+#verificando bondad de ajuste, calidad del modelo
+#tabla anova
+anova(mod1)
+#en este caso la variabilidad explicada del modelo es 0.033022=SSM (suma de cuadrados) debe ser cercano a cero
+#se revisa la SSR=0.003138 (suma de residuales) debe ser cercano a cero
+#revisando los valores del summary el estadistico
+summary(mod1)
+#F es mayor a 1 y p-value<0.05
+#con estas revisiones se puede mencionar que se rechaza
+#la hipotesis nula de F=1
+#y se puede establecer el modelo
+
+#revisando R2 multiple 
+#alrededor del 91% -summary(mod1) de la variabilidad de la estatura 
+#es explicada por la recta ajustada
+#############SUPUESTOS#############
+base1<-data.frame(neconomico,estaturas) 
+base1$fitted.mod1<-fitted(mod1)
+base1$residuals.mod1<-residuals(mod1)
+base1$rtudent.mod1<-rstudent(mod1)
+View(base1)
