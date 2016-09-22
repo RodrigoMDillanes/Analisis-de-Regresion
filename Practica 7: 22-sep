@@ -1,0 +1,101 @@
+estaturas<-c(1.2,1.23,1.19,1.32,1.28,1.22,1.17,1.29,1.33,1.15)
+neconomico<-c(110,130,108,167,156,115,104,138,170,107)
+
+#queremos comprobar la hipótesis que entre mayor nivel económico 
+#mayor es la estatura del niño
+#Paso 1: ver gráfica de dispersion para saber si podemos ajustar una recta
+
+plot(neconomico,estaturas, pch=8, xlab = "ingreso economico",ylab = "estatura", main = "grafica de dispersión",col="brown")
+#el argumento pch nos da la forma del punto de la grafica de dispersion
+#Paso 2: calcular correralcion
+#para calcular el coef. de correlacion usamos la funcion cor()
+
+cor(neconomico,estaturas,method = "pearson")
+
+#Paso 3: hacer prueba a la correlacion para afirmarla
+#la prueba de hipotesis H0=r=0
+#es decir no hay relacion, Ha=1 0 si hay relacion
+cor.test(neconomico,estaturas,method = "pearson")
+#si p-value<.05 la hipotesis es nula, rechazamos H0, aceptamos la hipotesis alternativa
+#por lo tanto  si existe relacion 
+
+#Paso 4: aplicar modelo  usando la funcion lineal model lm()
+mod1<-lm(estaturas~neconomico)
+#lm(var dependiente, var independiente)
+summary(mod1)
+#Residuals: queremos que sean muy cercanos a cero, nos generan las diferencias entre los valores ajustados y los reales
+#si nos da e asteriscos es porque es fuertemente significativo significativo y podemos interpretar los coeficioentes
+#con un * tenemos un 95% de confianza
+#graficando nuevamente
+plot(neconomico,estaturas, pch=8, xlab = "ingreso economico",ylab = "estatura", main = "grafica de dispersión",col="brown")
+#para añadir la recta ajustada usamos abline
+abline(mod1)#grafica la recta mod1 en la grafica de deispersion de las variables en estudio
+
+#con esto podriamos decir qie tenemos una ecuacion
+estaturas=.9323+.0023* neconomico
+summary(mod1$coefficients)
+
+#el error estandar es de 0.0198, lo vemos en el summary(mod1)
+summary(mod1)
+#para calcular el intervalo de confianza se usa
+confint(mod1,level = .95)
+# con una prob de 95 el coef b0 cae entre (0.854,1.0105)
+# con una prob de 95 el coef b1 cae entre (0.001753,0.002930)
+#verificando bondad de ajuste, calidad del modelo
+#tabla anova
+anova(mod1)
+#en este caso la variabilidad explicada del modelo es 0.033022=SSM (suma de cuadrados) debe ser cercano a cero
+#se revisa la SSR=0.003138 (suma de residuales) debe ser cercano a cero
+#revisando los valores del summary el estadistico
+summary(mod1)
+#F es mayor a 1 y p-value<0.05
+#con estas revisiones se puede mencionar que se rechaza
+#la hipotesis nula de F=1
+#y se puede establecer el modelo
+
+#revisando R2 multiple 
+#alrededor del 91% -summary(mod1) de la variabilidad de la estatura 
+#es explicada por la recta ajustada
+#############SUPUESTOS#############
+
+
+#####clas 22/09
+base1<-data.frame(neconomico,estaturas) 
+base1$fitted.mod1<-fitted(mod1)
+base1$residuals.mod1<-residuals(mod1)
+base1$rtudent.mod1<-rstudent(mod1)
+View(base1)
+install.packages("car") #tarda mucho en correr
+shapiro.test(base1$rtudent.mod1)
+#prueba para saber si es normal, es suficiente esa prueba
+#H0: la muestra tiene una dist.normal
+#Ha: la muestra no tiene una dist.normal
+#como el p-value es de 0.8172 no se rechaza H0
+qqnorm(base1$rtudent.mod1,main = "Normal (0,1)")
+qqline(base1$rtudent.mod1)
+#Comprobando la homogeneidad de varianzas
+#se rquiere la sig paqueteria
+install.packages("lmtest")
+require(lmtest)
+bptest(mod1)
+#como p-value>0.05 existe homogeneidad de la varianza
+#H0: si hay homegeneidad en las varianzas
+#Ha: no hay homegeneidad en las varianzas
+#PRUEBA DE AUTOCORRELACION O INDEPENDENCIA
+#se utiliza la funcion Durbin Watson
+dwtest(mod1, alternative = "two.sided")
+#se acepta la Hip porque p-value>0.05, no hay autocorrelacion
+#H0: no hay autocorreaccion en los residuos
+#Ha: hay autocorreaccion en los residuos
+#otra forma de evaluar la prueba de durbin watson es con el valor de durbin watson, que se espera que este entre 1.5 y 2.5
+#si esta dentro del rango se puede decir que no hay autocerrelacion
+plot(base1$residuals.mod1,pch=5) #no debe de tener patron
+abline(h=cor(base1$estaturas,base1$neconomico))
+#con este analisis ya podemos decir que nuestro modelo es bueno y predecir
+#debemos de tener cuidado con los rangos de nuestras variables
+#debemos definir los limites
+limbase1<-seq(min(base1$neconomico),max(base1$neconomico),length=10)
+limbase1<-data.frame(limbase1)
+limbasep<-predict.lm(mod1,limbase1,interval = "prediction",se.fit = T,data=base1)
+head(limbasep$fit)
+matplot(limbase1,limbasep$fit,type = "l",xlab = "ingreso",ylab = "estatura")
