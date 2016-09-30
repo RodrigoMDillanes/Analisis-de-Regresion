@@ -122,6 +122,6 @@ influencePlot(mod)
 install.packages("faraway")
 require(faraway)
 dc<-cooks.distance(mod)
-etiqueta<-rownames(mochila)
+etiqueta<-rownames(mochila) #creamos esta variable para que jale el numero de la fila
 halfnorm(dc,3,etiqueta) #el 3 es para que nos muestre los 3 valores mas altos de cook
 #seguimos teniendo problemas con el dato 10
