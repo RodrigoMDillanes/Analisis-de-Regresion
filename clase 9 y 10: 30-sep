@@ -1,0 +1,127 @@
+#### Modelo de Regresión múltiple
+
+capa <- c(4330, 5500, 5500, 4700, 5200, 5500, 4700, 5500, 5800, 5000)  ## independiente (x2)
+calidad <- c(2, 3, 4, 3, 4, 4, 4, 5, 5, 5) ## independiente (x1)
+precio <- c(190, 219, 249, 249, 250, 340, 289, 395, 439, 525) ## dependiente (y)
+
+mochila <- data.frame(precio, capa, calidad)
+
+# Primero aplicamos una correlación
+
+cor (mochila, use = "everything", method = "pearson")
+
+#Más cercano a 1 es porque tiene alta relación
+
+# Observamos que la variable tiene correlaciones diversas
+
+#### Aplicamos el modelo
+
+mod <- lm(precio~calidad+capa)
+summary(mod)
+
+
+# Se revisa la R2 ajustada por ser un MRM tenemos una R2 ajustada de 0.704 lo que implica 
+# que la recta de regresión  explica en 70% la variabilidad del modelo
+#revisando el valor F y p-value tenemos que si cumple con los criterios de un buen ajuste
+# (F>1 y p-value < 0.05)
+
+# con estos datos podemos mencionar que estamos ante un buen modelo por lo que se pasa al diagnóstico
+# el diagnóstico se realiza para poder generalizar los resultados del modelo a partir de la revisión de los supuestos
+
+# Lo primero que se hace en un MRM es observar gráficamente los supuestos
+
+plot(mod, which = 1, pch = 17) #which es el argumento de los supuestos
+
+# aquí esperamos que los residuos se distribuyan sin patrón con una tendencia en la variabilidad de los residuos 
+# sugiere que la varianza está relacionada con la media, violando el supuesto de varianza constante
+
+plot(mod, which = 2, pch = 17)
+
+# en este caso esperamos que los residuos tipificados alrededor de la línea se observa 
+#que si hay distribucuión normal
+
+plot(mod, which = 3, pch =17)
+
+
+# aquí podemos ver si los residuos se distribuyen constantes en los valores ajustados
+# una gráfica sin patrón observable
+
+plot (mod, which = 5, pch = 17)
+
+# expone la importancia de cada observación en el modelo en esta distancia el gráfico nos muestra
+# las observaciones que podrán impactar en el modelo,
+# por lo que se sugiere eliminarlas
+
+#se sugiere eliminar los datos más cercano a las líneas 1 y .5
+
+#nueva variable <- variable [c(renglones),c(columnas)]
+# si es un elemento no se pone c
+# se puede poner [1:3] para eliminar del 1 al 3
+
+# eliminamos 
+
+mochilita <- mochila[c(-1, -7, -10),]
+
+cor (mochilita, use = "everything", method = "pearson")
+help(lm)
+
+# la relación entre las variables aumenta
+
+###################################################
+#desupues de analizar graficamente
+#se aplican las pruebas para confirmar que el mrm si cumple con los supuestos 
+#para aplicar estas pruebas se generan los valores ajustados, residuales y estandarizados
+
+mochila$ajustados<-fitted(mod)#obtener los valores ajustados("y" gorro) del modelo
+mochila$residuales<-residuals(mod)
+mochila$restandarizadosz<-rstudent(mod)
+
+#1.-  de normalidad
+install.packages("lmtest")
+require(lmtest)
+ks.test(mochila$restandarizadosz,"pnorm")#para la prueba de normalidad, se palntea la hipotesis
+# y se espera un p-value>0.05, y por lo tanto no se rechaza una hipotesis nula (H0) y por lo tanto se acepta la normalidad
+
+#2.- homogeneidad de las varianzas
+?bptest
+bptest(mod,studentize = F,data = mochila)
+#p-value>0.05 ,por lo tanto pasa la prueba de homogeneidad de varianzas
+
+#3.- Autocorrelacion, prueba durbin-watson (independencia entre los errores)
+dwtest(mod,alternative = "two.sided",data = mochila)
+#hay dos formas de comprobar 
+#i- p-value>0.05
+#ii- el valor de durbin-eatson esta entre el rango aceptable (1.5,2.5)
+#por lo tanto hay independencia entre los errores
+
+#con estas tres pruebas y las pruebas graficas podemos decir que no hay relacion entre los residuos
+#con estas pruebas se confirma que tenemos un modelo con buen ajuste, sin embargo hay que revisar
+#los casos atipicos
+install.packages("car")
+require(car)
+outlierTest(mod) #muestra los casos atipicos del modelo
+# o outlier.test
+#una vez observados los casos atipicos
+#procedemos a conocer la influencia de estos casos en el modelo
+# con la siguiente funcion
+influ<-influence.measures(mod)
+summary(influ)
+#caso 1, 2 y 10 (potencialmente influyentes,casos mas influencia )
+# la columnas dfb indican la influencia de los coeficientes del modelo
+#las columnas de mayor interes con las cook.d y hat que nos exponen con mayor claridad la influencia
+#el cook.d es la distancia de cook, y entre mas cercano a 1 hay mayor influencia de la observacion
+#en este caso la observacion 10 es la que tiene mayor distancia de cook,en esta distancia valores
+# mayores a 1 hay certeza que si influeye en el modelo
+#la columna hat se asocia con las medidas de (0,1) entre mas cercano a 1 son mas influyente
+#ademas de estas pruebas de hace el analisis grafico de los casos influyentes
+#para este analisis tenemos la sig funcion..se requiere car
+influencePlot(mod)
+#el analisis de este grafico se realiza con base en el tamaño de las circunferencias que arroja
+#es decir, a mayor circunferencia el caso tiene mayor influencia 
+#la grafica de cook distance se requiere la paqueteria faraway
+install.packages("faraway")
+require(faraway)
+dc<-cooks.distance(mod)
+etiqueta<-rownames(mochila)
+halfnorm(dc,3,etiqueta) #el 3 es para que nos muestre los 3 valores mas altos de cook
+#seguimos teniendo problemas con el dato 10
