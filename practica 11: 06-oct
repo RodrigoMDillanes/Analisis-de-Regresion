@@ -87,9 +87,27 @@ estrellas <- c(4, 3.5, 3.5, 3.5, 3.5, 3.5, 3, 3, 2.5, 2)
 base<-data.frame(estrellas,operacion,uso,gama)
 cor(base,use = "everything",method = "pearson")
 modelo<-lm(estrellas~operacion+uso+gama)
+plot(modelo,pch=1)
 summary(modelo)
-
+estrellas=0.34510+0.25482*operacion+0.13249*uso+0.45852*gama
 #Al hacer el summary nos sale un valor medio de los residuales de -0.0599 que es muy cercano a cero,
 #un valor de F de 15.49, un p-value<0.05. Ademas de que las variables que tiene mayor signifiacia en el modelo
-#son operacion con un 95% y gama con un 99%
-#Por lo que podemos concluir que las variables propuestas en el modelo 
+#son operacion con un 95% y gama con un 99%, con una R^2 ajustada de 0.8284
+#Por lo que podemos concluir que las variables propuestas en el modelo cumple con todos los supuestos
+modelo2<-lm(estrellas~operacion+gama)
+summary(modelo2)
+estrellas=0.67184+0.26406*operacion+0.48527*gama
+#En comparacion modelo2 con modelo la R^2 ajustada mayor, por loq eu los datos estan mejor ajustados, ademas de que la f=23.15 y un p-value de 0.00082414
+
+#por lo tanto comparando las R^2 el mejor mrm es modelo2
+
+#comparando los modelos
+
+step(modelo,direction = "backward")
+#al hacer el metodo steo by step bajo el supuesta backward apreciamos primeramente un AIC=25.39 donde tomas totas las variables de nuestro modelo
+# despues al quitar la variable uso obtenemos un AIC=26.01 
+#y al final nos quedamos con el modelo con las variables operacion y gama, que es lo que habiamos concluido al comparar las R^2
+#Elaborado por:
+#Luly
+#Gaby
+#Rodrigo
