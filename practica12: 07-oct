@@ -1,0 +1,97 @@
+#### Modelo de Regresión múltiple
+
+capa <- c(4330, 5500, 5500, 4700, 5200, 5500, 4700, 5500, 5800, 5000)  ## independiente (x2)
+calidad <- c(2, 3, 4, 3, 4, 4, 4, 5, 5, 5) ## independiente (x1)
+precio <- c(190, 219, 249, 249, 250, 340, 289, 395, 439, 525) ## dependiente (y)
+
+mochila <- data.frame(precio, capa, calidad)
+
+# Primero aplicamos una correlación
+
+cor (mochila, use = "everything", method = "pearson")
+
+#Más cercano a 1 es porque tiene alta relación
+
+# Observamos que la variable tiene correlaciones diversas
+
+#### Aplicamos el modelo
+
+mod <- lm(precio~calidad+capa)
+summary(mod)
+
+#De acuerdo con la prueba step by step el mejor modelo es el siguente
+mod2<-lm(precio~calidad,data = mochila)
+#Ahora aplicaremos todas la pruebas y supuestos para ver si cumple
+
+mochila$ajus<-fitted(mod2)
+mochila$res<-residuals(mod2)
+mochila$rstudent<-rstudent(mod2)
+
+####### probaremos normalidad
+
+install.packages("lmtest")
+require(lmtest)
+ks.test(mochila$rstudent,"pnorm") #p- value>.05 entonces cumple normalidad
+#histograma
+hist(mochila$rstudent)
+
+#####probando homegeneidad
+bptest(mod2,studentize = F,data = mochila) #p-value>.05 entonces la varianza es constante a lo largo de la muestra y no tiene problemas de homegenediad de varianzas
+
+#####independencia de los residuales
+dwtest(mod2,alternative = "two.sided",data = mochila) #p-value>0.05
+
+###prueba de atipicos
+install.packages("car")
+require(car)
+
+######################ejercicios clase
+y <- c(25.5, 31.2, 25.9, 38.4, 18.4, 26.7, 26.4,25.9,32,25.2,39.7,35.7,26.5)
+x1<-c(1.74,6.32,6.2,10.52,1.19,1.22,4.10,6.32,4.08,4.15,10.15,1.72,1.70)
+x2<- c(5.30,5.42,8.41,4.63,11.60,5.85,6.62,8.72,4.42,7.60,4.83,3.12,5.3)
+x3<- c(10.8,9.4,7.2,8.5,9.4,9.9,8,9.1,8.7,9.2,9.4,7.6,8.2)
+## 0) analizar graficos de dispersion y pruebas de correlacion
+## 1) plantear la ecuacion estimada origina, es decir con todas las variables
+## 2) analizar la anova, r cuadrada, estadistico F (mediante p.h.)
+# 3) comparen modelos ccon backward y analicen el modelo qyue genere la funcion step con
+#con analizar me refiero a..los incisos 0,1,2 (en dado caso que se simplificara el modelo)
+#4) realizar la prueba de 3 supuestos a este modelo
+base<-data.frame(y,x1,x2,x3)
+cor(base,use = "everything",method = "pearson")
+modelo<-lm(base$y~base$x1+base$x2+base$x3)
+plot(modelo,pch=1,which = 1)
+summary(modelo)
+#Adjusted R-squared:  0.8825
+#F-statistic: 31.04
+#p-value: 4.465e-05
+#Residuals median: -0.3258
+#la unica variable que no es sifnificativa es x3
+y=39.1767+1.0166*x1-1.8608*x2-0.3461*x3
+anova(modelo)
+#se comprueba los datos del summary
+
+step(modelo,direction = "backward")
+#de acuerdo con esta prueba el mejor modelo es es siguiente
+y=36.089+1.031*x1-1.869*x2
+modelobueno<-lm(base$y~base$x1+base$x2)
+summary(modelobueno)
+#Adjusted R-squared:  0.8905
+#p-value: 6.319e-06
+#F-statistic: 49.81
+#Residuals median: -0.4087
+base$ajus<-fitted(modelobueno)
+base$res<-residuals(modelobueno)
+base$rstudent<-rstudent(modelobueno)
+
+##probando normalidad
+ks.test(base$rstudent,"pnorm")
+#Cumple normalidad p-value=0.5483
+hist(base$rstudent)
+
+#Probando homogeneidad
+bptest(modelobueno,studentize = F,data = base)
+#p-value=0.394 por lo tanto la varianza es constante a lo largo de la muestra
+
+#Pobando independencia
+dwtest(modelobueno,alternative = "two.sided",data = base)
+#p-value=0.354 por lo tanto hay indpendencia 
