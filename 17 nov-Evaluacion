@@ -1,0 +1,29 @@
+require(foreign)
+solorural<-data.frame(read.spss("/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/solorural.sav"))
+require(questionr)
+a<-wtd.table(solorural$ent,solorural$sex,weights = solorural$fac_mti)
+write.csv(a,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/SEXO.csv")
+
+b<-wtd.table(solorural$ent,solorural$sex)
+write.csv(b,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/MUESTRA.csv")
+
+ocupados<-subset(solorural,as.numeric(as.character(solorural$clase2))==1)
+
+c<-wtd.table(ocupados$sex,weights = ocupados$fac_mti)
+write.csv(c,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/OCUPADOS.csv")
+ocupados$eda<-as.numeric(as.character(ocupados$eda))
+ocupados$edad<-ifelse(ocupados$eda>=5 & ocupados$eda<=9,"5 a 9",
+               ifelse(ocupados$eda>=10 & ocupados$eda<=13,"10 a 13",
+               ifelse(ocupados$eda>=14 & ocupados$eda<=17,"14 a 17","+ 17")))
+
+d<-wtd.table(ocupados$edad,ocupados$sex,weights = ocupados$fac_mti)
+write.csv(d,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/GRUPOS DE EDAD.csv")
+
+e<-wtd.table(ocupados$asis,ocupados$sex,weights = ocupados$fac_mti)
+write.csv(e,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/ASISTENCIA ESCOLAR.csv")
+
+f<-wtd.table(ocupados$tam_hog,ocupados$sex,weights = ocupados$fac_mti)
+write.csv(f,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/TAM_HOG.csv")
+
+g<-wtd.table(ocupados$sex_jefe,weights = ocupados$fac_mti)
+write.csv(g,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/SEX_JEFE.csv")
