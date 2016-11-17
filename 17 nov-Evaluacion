@@ -27,3 +27,38 @@ write.csv(f,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/M
 
 g<-wtd.table(ocupados$sex_jefe,weights = ocupados$fac_mti)
 write.csv(g,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/SEX_JEFE.csv")
+
+			                         Niños	Niñas	Total
+					
+					
+Población de 5 a 17 años			4061217	3800117	7861334
+Tamaño de muestra		           	9302 	8798	18100
+Ocupados		                	622492	204970	827462
+% ocupados		              	15.33	   5.39	  10.53
+					
+CARACTERISTICAS INDIVIDUALES					
+					
+Ocupados por grupos de edad					
+5 a 9		                          	0	    0	    0
+10 a 13		                    	121416	37279	158695
+14 a 17		                    	501076	167691	668767
+Total		                      	622492	204970	827462
+					
+Ocupados según asistencia escolar					
+Asiste a la escuela		         	335572	107060	442632
+No asiste a la escuela			    286920	97910	384830
+Total		                       	622492	204970	827462
+					
+CARACTERISTICAS DEL HOGAR					
+					
+Tamaño del hogar					
+De 1 a 3 integrantes		         	55181  	25618  	80799
+De 4 a 5 integrantes	       		149312	  44721	  194033
+De 6 a 7 integrantes			       65844  	21472  	87316
+8 y mas integrantes		          	35190	  8830	  44020
+Total		                       	305527  	100641  	406168
+					
+Sexo del jefe del hogar					
+Hombre	327237				
+Mujer	  78931				
+Total 	406168				
