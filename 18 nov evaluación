@@ -1,0 +1,54 @@
+h<-wtd.table(ocupados$escol_jefe,weights = ocupados$fac_mti)
+write.csv(h,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/ESCOL_JEFE.csv")
+
+i<-wtd.table(ocupados$t_apo1,weights = ocupados$fac_mti)
+write.csv(i,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/T_APO1.csv")
+
+j<-wtd.table(ocupados$ocu_jefe,weights = ocupados$fac_mti)
+write.csv(j,"/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/OCU_JEFE.csv")
+
+Escolaridad del jefe de hogar			
+		                               absolutos    %	
+Sin instrucción                 	76549	      18.84663489	
+Primaria incompleta                	142224	35.01605247	
+Primaria completa	                  104816	25.80607039	
+Secundaria incompleta	                8683	2.13778535	
+Secundaria completa                  	54678	13.46191724	
+Algún año de preparatoria, 
+equivalente y más                    	19218	4.731539658	
+No especificado	                         0	0	
+Total                              	406168		
+			
+Tipo de apoyo			
+                                    	absolutos	  %	
+Beca para estudiar                    	319295	 38.58727047	
+Otro programa de gobierno              	121697	14.70726148	
+Ayuda de un familiar que vive 
+en otro hogar	                            6992	0.844993486	
+Otro tipo de ayuda	                      1474	0.178135068	
+No ha recibido ayuda	                   378004	45.68233949	
+Total	                                   827462		
+			
+Ocupación del jefe			
+                                       	absolutos   	%	
+Ocupado                                 	359790	88.58157216	
+Desocupado	                               46378	11.41842784	
+Total	                                   406168		
+
+#Iniciando modelo
+require(nnet)
+
+mod <- multinom(t_per ~ 1, data = ocupados)
+summary(mod)
+
+modfin<-multinom(t_per~sex+edad+asis+sex_jefe+escol_jefe+t_apo1+ocu_jefe,data=ocupados)
+g<-summary(modfin,wald=T)
+print(g)
+
+######### TABLA EN LATEX
+
+install.packages("stargazer")
+require (stargazer)
+
+s <- stargazer(modfin, type ="html", title = "Coefficients", summary = T) #Codigo
+stargazer(modfin, type = "text", title = "mlogit", summary = T, digits = 2, out = "/Users/rodrigomondragondillanes/Documents/Análisis de Regresión/Modulo de trabajo infantil/mlogit.txt")
